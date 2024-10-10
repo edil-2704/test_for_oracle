@@ -15,36 +15,53 @@ class SearchPage extends ConsumerWidget {
         title: const Text('Search Cities'),
         backgroundColor: Colors.amberAccent,
       ),
-      body: Column(
-        children: [
-          TextField(
-            controller: searchController,
-            decoration: InputDecoration(
-              labelText: 'Search City',
-              suffixIcon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  ref.read(searchQueryProvider.notifier).state =
-                      searchController.text;
-                },
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                hintText: 'Search City',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    ref.read(searchQueryProvider.notifier).state =
+                        searchController.text;
+                  },
+                ),
               ),
             ),
-          ),
-          citiesAsyncValue.when(
-            data: (cities) => Expanded(
-              child: ListView.builder(
-                itemCount: cities.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(cities[index].name),
-                  );
-                },
+            SizedBox(height: 20),
+            citiesAsyncValue.when(
+              data: (cities) => Expanded(
+                child: ListView.builder(
+                  itemCount: cities.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        cities[index].name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              error: (error, _) => Center(
+                child: Text('Error: $error'),
               ),
             ),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(child: Text('Error: $error')),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
